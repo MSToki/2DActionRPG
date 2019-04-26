@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Swordman : PlayerController
+public class Swordman : PlayerController_demo
 {
 
  
