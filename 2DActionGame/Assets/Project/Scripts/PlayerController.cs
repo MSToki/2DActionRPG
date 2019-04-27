@@ -10,7 +10,7 @@ public abstract class PlayerController :MonoBehaviour
     public float MoveSpeed = 6;
     public int JumpCount = 2;
     public float jumpForce = 15f;
-    public Vector2 speedLv;     // 移動速度
+    public float speedLv;     // 移動速度
     public Vector2 jumpLv;      // ジャンプ力
 
     TouchManager touchManager;
@@ -37,8 +37,8 @@ public abstract class PlayerController :MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        speedLv = new Vector2(2.0f, 0.0f);  // コンポーネントに代入 
-        jumpLv = new Vector2(300.0f, 0.0f); // addforceで飛ぶ
+        speedLv = 3.0f;  // コンポーネントに代入 
+        jumpLv = new Vector2(0.0f, 0.0f); // addforceで飛ぶ
 
         touchManager = new TouchManager();
         touchPropertys = touchManager.getTouchManager();
@@ -96,29 +96,28 @@ public abstract class PlayerController :MonoBehaviour
             else if (touchPropertys[i].nowTouchPhase == TouchPhase.Moved && isMove)
             {
                 // 移動ベクトル方向取得
-                Vector2 vct = (touchPropertys[i].endTouchPosition - touchPropertys[i].startTouchPosition).normalized;
-                float rad = Mathf.Rad2Deg * (Mathf.Atan2(vct.x, vct.y));    // 入力したベクトルを弧度法radとして再取得
-                if (rad <= 85.0f || rad >= 275.0f)
-                {// X軸正移動
+                Vector2 vct = touchPropertys[i].endTouchPosition - touchPropertys[i].startTouchPosition;
+
+                if (vct.x > 2)
+                {
+                    // X軸正移動
+                    this.gameObject.GetComponent<Rigidbody2D>().velocity = Vector2.right * speedLv;
                 }
-                if (rad >= 95.0f && rad <= 265.0f)
-                {// X軸負移動
+                else if (vct.x < -2)
+                {
+                    // X軸負移動
+                    this.gameObject.GetComponent<Rigidbody2D>().velocity = Vector2.left * speedLv;
                 }
 
                 // Y軸判定
-                if (rad > 80.0f && rad < 100.0f)
+                if (vct.y > 2)
                 {// 上入力判定（ジャンプ）
                     this.gameObject.GetComponent<Rigidbody2D>().AddForce(jumpLv);
                 }
-                else if (rad > 260.0f && rad < 280.0f)
+                else if (vct.y > -2)
                 {// 下入力判定
 
-                }// 
-
-
-
-
-                this.gameObject.GetComponent<Rigidbody2D>().velocity = vct * 2.0f;
+                }//
 
                 Debug.Log("マウス長押し　vecter：" + vct);
             }
